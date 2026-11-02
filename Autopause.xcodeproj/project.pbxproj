@@ -17,6 +17,7 @@
 		5E7245EA0343F15CDE2522E9 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B84F9067137FFE4B091D768 /* AppModel.swift */; };
 		62FDFDEA3B180959F3D3510C /* DuckStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A0D4255C9046F09C13E7DA /* DuckStateMachine.swift */; };
 		637FE5D8E862CD903D9D7F52 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5909A26BD73118C551D824F7 /* SettingsView.swift */; };
+		82EEF96BF3628D3A7188F602 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2639F4C9FEBBBE581F07EE71 /* Assets.xcassets */; };
 		89B904CBEFFFEE25AE579250 /* AppleEventsMediaBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81348E2C8ADCEE9F4FA358E3 /* AppleEventsMediaBackend.swift */; };
 		940D9EEAD0BFA5E8DEFAFF5E /* DuckStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64298C4D028B5568A1D5171 /* DuckStateMachineTests.swift */; };
 		9769BB00A783417BECC1B3B3 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A724DEEFC1297D9143C153 /* SettingsStore.swift */; };
@@ -32,6 +33,7 @@
 /* Begin PBXFileReference section */
 		008BD06CDD97251A9DE6E984 /* AutopauseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutopauseApp.swift; sourceTree = "<group>"; };
 		13A0D4255C9046F09C13E7DA /* DuckStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckStateMachine.swift; sourceTree = "<group>"; };
+		2639F4C9FEBBBE581F07EE71 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		27C8CC8C0598B463D3D04600 /* MicTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicTypes.swift; sourceTree = "<group>"; };
 		3C2AD7F66AB9F3479F252321 /* OutputDucker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputDucker.swift; sourceTree = "<group>"; };
 		475EC49FC514EDB2A3BB50C4 /* Autopause.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Autopause.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +115,7 @@
 				CEFD93B1323A64436FFCF667 /* Mic */,
 				6591FF541E8E4EB52799CF8A /* Settings */,
 				975018567AA45A7744490DF7 /* State */,
+				2639F4C9FEBBBE581F07EE71 /* Assets.xcassets */,
 			);
 			path = Autopause;
 			sourceTree = "<group>";
@@ -165,6 +168,7 @@
 			buildConfigurationList = 6964AEE0949BD39135F95317 /* Build configuration list for PBXNativeTarget "Autopause" */;
 			buildPhases = (
 				21860E948402B118FB06ACBE /* Sources */,
+				6FA3A1B9E036C7D066C66F61 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -230,6 +234,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6FA3A1B9E036C7D066C66F61 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82EEF96BF3628D3A7188F602 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		21860E948402B118FB06ACBE /* Sources */ = {

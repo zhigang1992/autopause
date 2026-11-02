@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+  <linearGradient id="tile" x1="0" y1="0" x2="0.85" y2="1">
+    <stop offset="0" stop-color="#29B9C9"/>
+    <stop offset="1" stop-color="#2565D6"/>
+  </linearGradient>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%" color-interpolation-filters="sRGB">
+    <feGaussianBlur stdDeviation="17"/>
+  </filter>
+  <!-- Smooth cubic corner transitions, with an 824px square footprint. -->
+  <path id="squircle" d="M 350,100 H 674 C 768,100 815,100 855,131 C 893,160 924,201 924,350 V 674 C 924,823 893,864 855,893 C 815,924 768,924 674,924 H 350 C 256,924 209,924 169,893 C 131,864 100,823 100,674 V 350 C 100,201 131,160 169,131 C 209,100 256,100 350,100 Z"/>
+</defs>
+<use href="#squircle" fill="#102B50" opacity="0.22" transform="translate(0 17)" filter="url(#shadow)"/>
+<use href="#squircle" fill="url(#tile)"/>
+<!-- The two halves of the microphone capsule are also the pause symbol. -->
+<g fill="#FFFFFF">
+  <rect x="432" y="290" width="64" height="280" rx="32"/>
+  <rect x="528" y="290" width="64" height="280" rx="32"/>
+</g>
+<g fill="none" stroke="#FFFFFF" stroke-width="38" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M 380,478 V 530 C 380,603 439,650 512,650 C 585,650 644,603 644,530 V 478"/>
+  <path d="M 512,653 V 728 M 454,728 H 570"/>
+</g>
+</svg>
