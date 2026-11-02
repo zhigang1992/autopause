@@ -5,7 +5,8 @@ Built for dictation (for example 豆包输入法) so you don't have to stop and 
 playback by hand.
 
 Nothing is recorded. Autopause never opens an input stream, never sends audio
-anywhere, and has no account or network code.
+anywhere, and has no account. Its only network access is the update check
+(see Updates).
 
 ## Build and run
 
@@ -37,9 +38,25 @@ keychain and an App Store Connect API key stored via `asc auth login`:
 scripts/release.sh
 ```
 
-It builds with the hardened runtime, notarizes with `asc notarization submit`,
-staples the ticket, and writes `build/release/Autopause-<version>.zip`. The
-icon source is `Design/AppIcon.svg`.
+It builds with the hardened runtime, re-signs Sparkle's helpers, notarizes with
+`asc notarization submit`, staples the ticket, and writes
+`build/release/Autopause-<version>.zip`. The icon source is `Design/AppIcon.svg`.
+
+### Updates (Sparkle)
+
+Autopause checks for updates automatically using [Sparkle](https://sparkle-project.org)
+and has **Check for Updates…** in its menu. This is the only network access in
+the app: it fetches `appcast.xml` from this repository and downloads the signed
+zip from GitHub Releases. Updates are verified against the EdDSA public key in
+`Info.plist` (`SUPublicEDKey`) before install.
+
+To publish a new version:
+
+1. Bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml`, then `xcodegen generate`.
+2. Run `scripts/release.sh`. It signs the zip with the private key in your login keychain (create it once with Sparkle's `generate_keys`; never commit it) and rewrites `appcast.xml`.
+3. Create the GitHub release `v<version>` with the zip, then commit and push `appcast.xml`.
+
+Versions before 1.1.0 have no updater and must be replaced by hand once.
 
 ## Behaviour
 

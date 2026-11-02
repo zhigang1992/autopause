@@ -8,10 +8,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private var cancellable: AnyCancellable?
 
     private let onOpenSettings: () -> Void
+    private let onCheckForUpdates: () -> Void
 
-    init(model: AppModel, onOpenSettings: @escaping () -> Void) {
+    init(model: AppModel, onOpenSettings: @escaping () -> Void, onCheckForUpdates: @escaping () -> Void) {
         self.model = model
         self.onOpenSettings = onOpenSettings
+        self.onCheckForUpdates = onCheckForUpdates
     }
 
     func install() {
@@ -56,6 +58,11 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         let settings = NSMenuItem(title: "Settings…", action: #selector(openSettings), keyEquivalent: ",")
         settings.target = self
         menu.addItem(settings)
+
+        let updates = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
+        updates.target = self
+        menu.addItem(updates)
+        menu.addItem(.separator())
 
         let quit = NSMenuItem(title: "Quit Autopause", action: #selector(quit), keyEquivalent: "q")
         quit.target = self
@@ -104,6 +111,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     @objc private func openSettings() {
         onOpenSettings()
+    }
+
+    @objc private func checkForUpdates() {
+        onCheckForUpdates()
     }
 
     @objc private func quit() {

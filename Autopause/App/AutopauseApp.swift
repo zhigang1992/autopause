@@ -17,12 +17,15 @@ struct AutopauseApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let model = AppModel()
     private lazy var settingsWindow = SettingsWindowController(model: model)
+    private let updates = UpdateController()
     private var status: StatusItemController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        let status = StatusItemController(model: model) { [weak self] in
-            self?.settingsWindow.show()
-        }
+        let status = StatusItemController(
+            model: model,
+            onOpenSettings: { [weak self] in self?.settingsWindow.show() },
+            onCheckForUpdates: { [weak self] in self?.updates.checkForUpdates() }
+        )
         status.install()
         self.status = status
         model.start()
