@@ -23,6 +23,24 @@ slashed mic while audio is ducked. The menu shows Listening or
 
 `project.yml` regenerates the Xcode project with [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`xcodegen generate`). The checked-in `Autopause.xcodeproj` is what `xcodebuild` uses.
 
+## Distribution
+
+Autopause is distributed outside the Mac App Store as a Developer ID signed,
+notarized app, so Pause (Apple Events and the MediaRemote fallback) works.
+Download the zip from the GitHub Releases page, unzip, and move `Autopause.app`
+to `/Applications`.
+
+To build a release yourself, with a Developer ID Application certificate in the
+keychain and an App Store Connect API key stored via `asc auth login`:
+
+```sh
+scripts/release.sh
+```
+
+It builds with the hardened runtime, notarizes with `asc notarization submit`,
+staples the ticket, and writes `build/release/Autopause-<version>.zip`. The
+icon source is `Design/AppIcon.svg`.
+
 ## Behaviour
 
 `Idle → Active → Grace → Idle`.

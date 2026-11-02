@@ -7,5 +7,9 @@
 	     not. See README. -->
 	<key>com.apple.security.app-sandbox</key>
 	<false/>
+	<!-- Required under the hardened runtime so Pause can send Apple Events to
+	     Music and Spotify (the Automation prompt). Not used by Mute. -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
 </dict>
 </plist>
