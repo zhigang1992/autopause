@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Autopause</title>
+    <item>
+      <title>Version 1.1.0</title>
+      <pubDate>Mon, 02 Nov 2026 18:25:25 +0000</pubDate>
+      <sparkle:version>3</sparkle:version>
+      <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <sparkle:releaseNotesLink>https://github.com/zhigang1992/autopause/releases/tag/v1.1.0</sparkle:releaseNotesLink>
+      <enclosure url="https://github.com/zhigang1992/autopause/releases/download/v1.1.0/Autopause-1.1.0.zip" type="application/octet-stream" sparkle:edSignature="ecog+wKEF6wRSmx+1IalMCLuCm9OUy1RiT7J0X+X0BJNw7CyzGGM4NMku6r7mOFgn8/4g/F+T82p+1KHYhu0Cw==" length="1606213"/>
+    </item>
+  </channel>
+</rss>
