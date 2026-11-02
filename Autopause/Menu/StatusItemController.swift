@@ -7,8 +7,11 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private var item: NSStatusItem?
     private var cancellable: AnyCancellable?
 
-    init(model: AppModel) {
+    private let onOpenSettings: () -> Void
+
+    init(model: AppModel, onOpenSettings: @escaping () -> Void) {
         self.model = model
+        self.onOpenSettings = onOpenSettings
     }
 
     func install() {
@@ -100,8 +103,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     @objc private func openSettings() {
-        NSApp.activate()
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        onOpenSettings()
     }
 
     @objc private func quit() {
