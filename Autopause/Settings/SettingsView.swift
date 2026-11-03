@@ -116,8 +116,10 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 520)
-        .padding(.vertical, 8)
+        // A grouped Form scrolls, so it has no intrinsic height. Without an
+        // explicit one the hosting window collapses to just its title bar.
+        .frame(minWidth: 480, idealWidth: 520, maxWidth: 640,
+               minHeight: 360, idealHeight: 600, maxHeight: 900)
     }
 
     private var modeCaption: String {
