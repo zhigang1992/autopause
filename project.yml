@@ -12,8 +12,8 @@ settings:
   SWIFT_DEFAULT_ACTOR_ISOLATION: nonisolated
   SWIFT_APPROACHABLE_CONCURRENCY: NO
   CODE_SIGN_STYLE: Automatic
-  CURRENT_PROJECT_VERSION: "3"
-  MARKETING_VERSION: "1.1.0"
+  CURRENT_PROJECT_VERSION: "4"
+  MARKETING_VERSION: "1.1.1"
 packages:
   Sparkle:
     url: https://github.com/sparkle-project/Sparkle
