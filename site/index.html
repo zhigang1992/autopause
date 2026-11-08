@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Autopause — the song sits down</title>
+  <meta name="description" content="A Mac menu-bar app that pauses or fades your music while a microphone is in use. Nothing is recorded.">
+  <link rel="canonical" href="https://autopause.reily.app/">
+  <meta property="og:title" content="Autopause — the song sits down">
+  <meta property="og:description" content="A Mac menu-bar app that pauses or fades your music while a microphone is in use. Nothing is recorded.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://autopause.reily.app/">
+  <meta property="og:image" content="https://autopause.reily.app/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#141c27">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preload" href="/fonts/caprasimo.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-state="idle" data-mode="pause">
+  <a class="skip" href="#content">Skip to the words</a>
+  <header class="bar">
+    <a class="brand" href="#top">
+      <img src="/apple-touch-icon.png" width="18" height="18" alt="">
+      Autopause
+    </a>
+    <div class="bar-right">
+      <time class="clock" id="clock">–:–</time>
+      <span class="bar-status" id="bar-status" aria-hidden="true">Listening</span>
+      <button type="button" class="bar-mic" id="bar-mic" aria-pressed="false" aria-label="Pretend the microphone is in use">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="24" y="10" width="6.5" height="22" rx="3.2" fill="currentColor"/>
+          <rect x="33.5" y="10" width="6.5" height="22" rx="3.2" fill="currentColor"/>
+          <path d="M16 30v5.5c0 8.8 7.2 15 16 15s16-6.2 16-15V30" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>
+          <path d="M32 50.5V58M24 58h16" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>
+          <path class="slash" d="M16 50 L48 14" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap" id="top">
+    <div class="hero" id="content">
+      <p class="kicker">AP–001 <span aria-hidden="true">·</span> macOS menu bar</p>
+      <h1>the mic is on.<br><span>the song sits down.</span></h1>
+      <div class="pitch">
+        <p class="lede">Autopause lives in the menu bar. When a microphone turns on, it pauses your music — or fades the volume — and puts it back when you stop. Dictating no longer means lunging for the pause key.</p>
+        <div class="cta">
+          <a class="dl" href="https://github.com/zhigang1992/autopause/releases/download/v1.1.1/Autopause-1.1.1.zip">
+            <strong>Download for Mac</strong>
+            <small>1.1.1 · notarized zip · 1.5 MB</small>
+          </a>
+          <a class="textlink" href="https://github.com/zhigang1992/autopause">Source on GitHub</a>
+        </div>
+        <p class="fine">Not in the App Store. Unzip it, and move Autopause into Applications. macOS 14 or later.</p>
+      </div>
+
+      <section class="demo" aria-label="A small radio you can hush">
+        <div class="radio">
+          <div class="stage-top">
+            <div class="grille" aria-hidden="true"><span class="cone"></span></div>
+            <div class="sky" aria-hidden="true">
+              <svg class="arcs" viewBox="0 0 60 90">
+                <path class="arc a1" d="M8 26q14 19 0 38"/>
+                <path class="arc a2" d="M20 16q20 29 0 58"/>
+                <path class="arc a3" d="M34 8q26 37 0 74"/>
+              </svg>
+              <span class="note n1"><i><svg viewBox="0 0 40 56"><ellipse cx="12" cy="44" rx="9" ry="6.5" transform="rotate(-20 12 44)" fill="currentColor"/><path d="M19.5 44V8" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M19.5 10c10 3 16 8 14 16" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></i></span>
+              <span class="note n2"><i><svg viewBox="0 0 40 56"><ellipse cx="12" cy="44" rx="9" ry="6.5" transform="rotate(-20 12 44)" fill="currentColor"/><path d="M19.5 44V8" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M19.5 10c10 3 16 8 14 16" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></i></span>
+              <span class="note n3"><i><svg viewBox="0 0 40 56"><ellipse cx="12" cy="44" rx="9" ry="6.5" transform="rotate(-20 12 44)" fill="currentColor"/><path d="M19.5 44V8" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M19.5 10c10 3 16 8 14 16" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></i></span>
+            </div>
+          </div>
+          <div class="lcd" aria-hidden="true">
+            <div class="lcd-row">
+              <span class="led"></span>
+              <p>
+                <span class="lcd-1" id="lcd-1">Listening</span>
+                <span class="lcd-2" id="lcd-2">music is up</span>
+              </p>
+            </div>
+            <div class="grace"><span></span></div>
+          </div>
+          <p class="sr" id="live" aria-live="polite">Listening. Music is up.</p>
+          <div class="controls">
+            <fieldset class="switch" aria-label="How the music ducks">
+              <label><input type="radio" name="mode" value="pause" checked><span>Pause</span></label>
+              <label><input type="radio" name="mode" value="mute"><span>Mute</span></label>
+            </fieldset>
+            <button type="button" class="knob" id="mic" aria-pressed="false" aria-label="Pretend the microphone is in use">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <rect x="24" y="10" width="6.5" height="22" rx="3.2" fill="currentColor"/>
+                <rect x="33.5" y="10" width="6.5" height="22" rx="3.2" fill="currentColor"/>
+                <path d="M16 30v5.5c0 8.8 7.2 15 16 15s16-6.2 16-15V30" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>
+                <path d="M32 50.5V58M24 58h16" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>
+                <path class="slash" d="M16 50 L48 14" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="feet" aria-hidden="true"><i></i><i></i></div>
+        </div>
+        <p class="hint">Press the mic, or the M key. Pause sits the notes down. Mute leaves them drifting, just very quiet. The real app does this when a microphone is actually in use.</p>
+      </section>
+    </div>
+
+    <section class="habits" aria-label="What it does">
+      <article>
+        <p class="num">01</p>
+        <h2>It pauses</h2>
+        <p>Music, Spotify, and whatever macOS currently has playing. It starts the song again only if it was the one who stopped it. Press play yourself mid-sentence and Autopause leaves your hands alone.</p>
+      </article>
+      <article>
+        <p class="num">02</p>
+        <h2>Or it fades</h2>
+        <p>Mute keeps the song running and eases the speakers down, about a third of a second unless you want it instant. Move the volume while it’s quiet and Autopause takes its hand off the fader.</p>
+      </article>
+      <article>
+        <p class="num">03</p>
+        <h2>It waits out a comma</h2>
+        <p>A second and a half after the mic goes quiet, so the music doesn’t jump back between phrases. Anything shorter than a blink is ignored. Talk again during the wait and it doesn’t start over.</p>
+      </article>
+    </section>
+
+    <section class="block">
+      <h2>Only the apps you mean</h2>
+      <p>Any microphone will do it, which is right until a call also hushes the room. Dictate once. The app that had the mic shows up by name. Choose “Only these apps,” and the others can talk without touching the music.</p>
+    </section>
+
+    <section class="block shout">
+      <h2>It never hears you.</h2>
+      <p>No microphone permission. Autopause watches whether an input is running — it never opens a stream, never records, and has no account. The only thing it fetches is its own update, and it checks the signature before installing.</p>
+    </section>
+
+    <section class="block">
+      <h2>Into the menu bar</h2>
+      <ol class="steps">
+        <li><span>01</span> Download the zip and open it.</li>
+        <li><span>02</span> Drag Autopause into Applications.</li>
+        <li><span>03</span> Click the mic up top. The fade, the wait, and launch at login live in Settings.</li>
+      </ol>
+      <p class="note-after">The first time Pause talks to Music or Spotify, macOS asks if that’s okay. Mute never asks. Quit while the sound is ducked and Autopause puts it back.</p>
+    </section>
+
+    <footer class="colophon">
+      <p><em>The icon is a microphone made out of a pause symbol. That’s the whole idea.</em></p>
+      <p>Autopause 1.1.1 · a reily utility · <a href="https://github.com/zhigang1992/autopause">GitHub</a></p>
+    </footer>
+  </main>
+  <script src="/site.js"></script>
+</body>
+</html>

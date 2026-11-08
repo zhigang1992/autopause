@@ -1,0 +1,6 @@
+# Static site in ./site. Pages rejects account_id in this file;
+# set CLOUDFLARE_ACCOUNT_ID=7909ed6364bb6050947b313cf19f71c7 instead.
+#   wrangler pages deploy site --project-name autopause --branch main
+name = "autopause"
+pages_build_output_dir = "site"
+compatibility_date = "2026-11-08"

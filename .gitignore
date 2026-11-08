@@ -9,3 +9,4 @@ xcuserdata/
 *.ipa
 *.app
 .swiftpm/
+.wrangler/

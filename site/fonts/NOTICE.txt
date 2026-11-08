@@ -1,0 +1,6 @@
+Fonts on this site are licensed under the SIL Open Font License, Version 1.1.
+https://openfontlicense.org
+
+Atkinson Hyperlegible — Copyright 2020 The Atkinson Hyperlegible Project Authors (Braille Institute of America)
+Caprasimo — Copyright 2023 The Caprasimo Project Authors
+IBM Plex Mono — Copyright 2017 IBM Corp.
