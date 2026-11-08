@@ -54,8 +54,8 @@
   --btn-text: #fbf6ee;
   --btn-sub: #c9d4e2;
   --line: rgba(23, 32, 51, 0.16);
-  --display: "Caprasimo", "American Typewriter", "Iowan Old Style", serif;
-  --font: "Atkinson Hyperlegible", "Avenir Next", "Segoe UI", sans-serif;
+  --display: "Caprasimo", "American Typewriter", "Iowan Old Style", "Songti SC", serif;
+  --font: "Atkinson Hyperlegible", "PingFang SC", "Avenir Next", "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 
@@ -269,9 +269,46 @@ h1 {
   letter-spacing: -0.02em;
 }
 
-h1 span {
+h1 .accent {
   padding-left: 0.16em;
   color: var(--teal);
+}
+
+html[lang="zh-Hans"] {
+  --display: "Songti SC", "Source Han Serif SC", "Noto Serif SC", "Songti TC", serif;
+  --font: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+html[lang="zh-Hans"] h1,
+html[lang="zh-Hans"] .shout h2 {
+  letter-spacing: 0;
+}
+
+html[lang="zh-Hans"] h1 .accent { padding-left: 0; }
+
+html[lang="zh-Hans"] .kicker { letter-spacing: 0.06em; text-transform: none; }
+
+.lang {
+  display: flex;
+  border: 1px solid rgba(244, 239, 230, 0.28);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lang button {
+  border: 0;
+  background: transparent;
+  color: rgba(244, 239, 230, 0.72);
+  font-family: var(--font);
+  font-size: 12px;
+  line-height: 1;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+.lang button[aria-pressed="true"] {
+  background: #f4efe6;
+  color: #141c27;
 }
 
 .lede {

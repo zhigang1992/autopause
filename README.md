@@ -1,5 +1,21 @@
 # Autopause
 
+听写的时候，音乐先安静。网站在 [autopause.reily.app](https://autopause.reily.app)。
+
+## 这是做什么的
+
+macOS 菜单栏应用。麦克风在用的时候（比如用豆包输入法听写），它会暂停或静音正在放的音乐，说完再放回来。不用自己去按暂停。
+
+不录音。不打开麦克风，不申请麦克风权限，没有账号。唯一的网络请求是检查更新。
+
+- **静音**：歌继续放，把系统音量淡下去，说完再淡回来。这是「说话时把声音关掉」的那一种。
+- **暂停**：停掉 Music、Spotify，以及 macOS 当前正在播放的内容。只有 Autopause 自己暂停的，才会再播放。中途按了播放，它就不再插手。
+- 默认再等 1.5 秒才恢复，免得两句话之间音乐弹一下。也可以只让指定的 App 触发，开会就不会把歌停掉。
+
+[下载 1.1.1](https://github.com/zhigang1992/autopause/releases/download/v1.1.1/Autopause-1.1.1.zip) · macOS 14 或更新。不在 App Store。zip 已用 Developer ID 签名并公证。解压后把 `Autopause.app` 放进「应用程序」。
+
+## What it does
+
 macOS menu-bar app that pauses or mutes your music while a microphone is in use.
 Built for dictation (for example 豆包输入法) so you don't have to stop and start
 playback by hand.
