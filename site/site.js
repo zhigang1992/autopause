@@ -10,6 +10,7 @@
       dl: "Download for Mac",
       dlsmall: "1.1.1 · notarized zip · 1.5 MB",
       more: "Read more on GitHub",
+      moreHref: "https://github.com/zhigang1992/autopause#what-it-does",
       fine: "Unzip it and move Autopause into Applications. macOS 14 or later.",
       hint: "Press the mic. The real app notices a microphone by itself.",
       foot: "The longer explanation is on GitHub.",
@@ -33,6 +34,7 @@
       dl: "下载 Mac 版",
       dlsmall: "1.1.1 · 已公证 · 1.5 MB",
       more: "在 GitHub 上看说明",
+      moreHref: "https://github.com/zhigang1992/autopause#这是做什么的",
       fine: "解压后放进「应用程序」。需要 macOS 14 或更新。",
       hint: "按一下麦克风试试。真正听写时不用按，它自己能发现。",
       foot: "更完整的说明在 GitHub。",
@@ -91,6 +93,9 @@
     });
     document.querySelectorAll("[data-set-lang]").forEach(function (el) {
       el.setAttribute("aria-pressed", el.getAttribute("data-set-lang") === lang ? "true" : "false");
+    });
+    document.querySelectorAll("[data-i18n-href]").forEach(function (el) {
+      el.href = t(el.getAttribute("data-i18n-href"));
     });
     if (lcd1) render();
   }

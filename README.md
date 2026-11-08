@@ -1,6 +1,18 @@
 # Autopause
 
-听写的时候，音乐先安静。网站在 [autopause.reily.app](https://autopause.reily.app)。
+A Mac menu-bar app that pauses or mutes your music while you dictate. The site is [autopause.reily.app](https://autopause.reily.app).
+
+## What it does
+
+While a microphone is in use (for example 豆包输入法), Autopause pauses or mutes whatever is playing, then brings it back when you stop. You don't have to hit pause yourself.
+
+Nothing is recorded. It never opens the microphone, never asks for microphone permission, and has no account. The only network request is the update check.
+
+- **Mute** — the song keeps playing. System volume fades down, then fades back. This is the one that quiets the room while you talk.
+- **Pause** — stops Music, Spotify, and whatever macOS is currently playing. Only what Autopause itself paused is played again. If you press play in the middle, it stays out of the way.
+- It waits 1.5 seconds before restoring, so the music doesn't jump back between phrases. You can also limit it to specific apps, so a call doesn't cut the song.
+
+[Download 1.1.1](https://github.com/zhigang1992/autopause/releases/download/v1.1.1/Autopause-1.1.1.zip) · macOS 14 or later. Not on the App Store. The zip is Developer ID signed and notarized. Unzip it and move `Autopause.app` into Applications.
 
 ## 这是做什么的
 
@@ -13,16 +25,6 @@ macOS 菜单栏应用。麦克风在用的时候（比如用豆包输入法听�
 - 默认再等 1.5 秒才恢复，免得两句话之间音乐弹一下。也可以只让指定的 App 触发，开会就不会把歌停掉。
 
 [下载 1.1.1](https://github.com/zhigang1992/autopause/releases/download/v1.1.1/Autopause-1.1.1.zip) · macOS 14 或更新。不在 App Store。zip 已用 Developer ID 签名并公证。解压后把 `Autopause.app` 放进「应用程序」。
-
-## What it does
-
-macOS menu-bar app that pauses or mutes your music while a microphone is in use.
-Built for dictation (for example 豆包输入法) so you don't have to stop and start
-playback by hand.
-
-Nothing is recorded. Autopause never opens an input stream, never sends audio
-anywhere, and has no account. Its only network access is the update check
-(see Updates).
 
 ## Build and run
 
