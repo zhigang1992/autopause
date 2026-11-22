@@ -96,7 +96,7 @@ on restore.
 Backends sit behind `MediaBackend`:
 
 1. **Music** and **Spotify** — Apple Events (public). The app is not launched if it isn't already running.
-2. **`MediaRemoteBackend`** — private fallback for the current Now Playing session, which is what actually pauses browser media. It `dlopen`s `/System/Library/PrivateFrameworks/MediaRemote.framework` and calls `MRMediaRemoteGetNowPlayingApplicationIsPlaying`, `MRMediaRemoteGetNowPlayingApplicationPID`, and `MRMediaRemoteSendCommand`. There is no public API that can do this. **This fallback blocks the Mac App Store** and does not work in the App Sandbox. If the symbols are missing, Pause still covers Music and Spotify.
+2. **`MediaRemoteBackend`** — private fallback for the current Now Playing session, which is what pauses browser media and any other player the keyboard's play/pause key reaches (for example 汽水音乐 / Soda Music). It `dlopen`s `/System/Library/PrivateFrameworks/MediaRemote.framework` and sends `MRMediaRemoteSendCommand` with explicit pause and play commands (not a toggle). To know whether something is playing and which app owns it, it calls `MRMediaRemoteGetNowPlayingApplicationIsPlaying` and `MRMediaRemoteGetNowPlayingApplicationPID`; since macOS 15.4 those answer only Apple-signed processes, so when they come back empty it asks `/usr/bin/osascript` to read `MRNowPlayingRequest` instead. It pauses only what is playing, and resumes only if the same app still owns Now Playing and is still paused. There is no public API that can do this. **This fallback blocks the Mac App Store** and does not work in the App Sandbox. If the symbols are missing, Pause still covers Music and Spotify.
 
 Now Playing is a single session. Two players that are not Music or Spotify are not controlled independently.
 
@@ -131,7 +131,7 @@ Everything in Settings is stored in `UserDefaults`.
 | Mic detection | None. Microphone access is not requested. |
 | Mute | None. |
 | Pause of Music or Spotify | Automation, the first time each app is controlled. Deny it and Pause can't drive that app; Mute still works. |
-| Pause of browsers (MediaRemote) | None, but it is a private API. See below. |
+| Pause of browsers and other Now Playing apps (MediaRemote) | None, but it is a private API. See below. |
 | Launch at login | macOS may ask you to approve the login item. |
 
 ## Sandbox and the Mac App Store
