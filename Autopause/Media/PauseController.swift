@@ -92,7 +92,12 @@ final class PauseController {
             guard let self else { return }
             self.pollInFlight = false
             guard self.generation == generation, self.isDucking, self.pausedMediaRemote else { return }
-            guard pid == self.mediaRemotePID || pid == 0 else { return }
+            if pid != 0, pid != self.mediaRemotePID {
+                // Another app owns Now Playing now. A play command would go to
+                // that app, so never resume this session.
+                self.mediaRemoteOverridden = true
+                return
+            }
             if !playing {
                 self.mediaRemoteConfirmedPaused = true
             } else if self.mediaRemoteConfirmedPaused {
@@ -111,7 +116,12 @@ final class PauseController {
             }
         }
         if pausedMediaRemote, !mediaRemoteOverridden {
-            mediaRemote.resume()
+            // Play goes to whatever owns Now Playing, so only send it while
+            // the app this controller paused still owns it and is still paused.
+            let state = mediaRemote.currentState()
+            if !state.playing, state.pid == mediaRemotePID || state.pid == 0 {
+                mediaRemote.resume()
+            }
         }
         clear()
     }

@@ -3,19 +3,31 @@ import os
 
 /// Private fallback for the system's current Now Playing session.
 ///
-/// Music and Spotify are paused through Apple Events. Browsers (and anything
-/// else that only publishes Now Playing) are not scriptable, and there is no
-/// public macOS API that can pause them. This type `dlopen`s
-/// `/System/Library/PrivateFrameworks/MediaRemote.framework` and calls:
+/// Music and Spotify are paused through Apple Events. Browsers and other
+/// players (汽水音乐 / Soda Music, Electron apps, anything the play/pause media
+/// key reaches) only publish Now Playing, and there is no public macOS API that
+/// can pause them. This type `dlopen`s
+/// `/System/Library/PrivateFrameworks/MediaRemote.framework` and:
 ///
-/// - `MRMediaRemoteGetNowPlayingApplicationIsPlaying`
-/// - `MRMediaRemoteGetNowPlayingApplicationPID`
-/// - `MRMediaRemoteSendCommand` (0 = play, 1 = pause)
+/// - sends `MRMediaRemoteSendCommand` (0 = play, 1 = pause) in-process. These
+///   are explicit commands, not a toggle, and are what the media key uses.
+/// - reads whether Now Playing is playing, and its pid, with
+///   `MRMediaRemoteGetNowPlayingApplicationIsPlaying` /
+///   `MRMediaRemoteGetNowPlayingApplicationPID`. Since macOS 15.4 those getters
+///   answer only Apple-signed processes and report "not playing, pid 0" to
+///   everyone else, so the fallback would never pause anything. When they come
+///   back empty, the state is read through `/usr/bin/osascript` (an Apple
+///   binary) using `MRNowPlayingRequest` instead.
 ///
 /// That framework is private. These calls do not work in the App Sandbox and a
 /// build that ships them cannot go on the Mac App Store. If the symbols are
 /// missing, `isAvailable` is false and Pause simply skips this backend.
 final class MediaRemoteBackend: MediaBackend {
+    struct State {
+        var playing: Bool
+        var pid: pid_t
+    }
+
     let id = "mediaremote"
     let usesPrivateAPI = true
 
@@ -34,7 +46,7 @@ final class MediaRemoteBackend: MediaBackend {
     private let playCommand: UInt32 = 0
     private let pauseCommand: UInt32 = 1
 
-    var isAvailable: Bool { isPlayingFunction != nil && sendFunction != nil }
+    var isAvailable: Bool { sendFunction != nil }
 
     init() {
         let path = "/System/Library/PrivateFrameworks/MediaRemote.framework/MediaRemote"
@@ -47,19 +59,12 @@ final class MediaRemoteBackend: MediaBackend {
             isPlayingFunction = nil
             pidFunction = nil
             sendFunction = nil
-            log.error("MediaRemote failed to load; browser pause is unavailable")
+            log.error("MediaRemote failed to load; Now Playing pause is unavailable")
         }
     }
 
     func isPlaying() -> Bool {
-        var playing = false
-        let semaphore = DispatchSemaphore(value: 0)
-        query { value, _ in
-            playing = value
-            semaphore.signal()
-        }
-        _ = semaphore.wait(timeout: .now() + 1)
-        return playing
+        currentState().playing
     }
 
     func pauseIfPlaying() -> Bool {
@@ -78,26 +83,107 @@ final class MediaRemoteBackend: MediaBackend {
 
     /// Whether Now Playing is active, and which pid owns it. Completion is on the main queue.
     func query(completion: @escaping (_ playing: Bool, _ pid: pid_t) -> Void) {
-        guard let isPlayingFunction else {
-            DispatchQueue.main.async { completion(false, 0) }
-            return
+        queue.async { [weak self] in
+            let state = self?.currentState() ?? State(playing: false, pid: 0)
+            DispatchQueue.main.async { completion(state.playing, state.pid) }
         }
-        let playingBlock: @convention(block) (Bool) -> Void = { [weak self] playing in
-            guard let self else {
-                DispatchQueue.main.async { completion(false, 0) }
-                return
-            }
-            guard let pidFunction = self.pidFunction else {
-                DispatchQueue.main.async { completion(playing, 0) }
-                return
-            }
-            let pidBlock: @convention(block) (Int32) -> Void = { pid in
-                DispatchQueue.main.async { completion(playing, pid) }
-            }
-            pidFunction(self.queue, pidBlock)
-        }
-        isPlayingFunction(queue, playingBlock)
     }
+
+    /// Synchronous read of Now Playing. Blocks for at most about two seconds.
+    /// Safe on any thread.
+    func currentState() -> State {
+        let direct = directState()
+        if direct.pid != 0 {
+            return direct
+        }
+        // pid 0 is what the entitlement-gated getters return on macOS 15.4+,
+        // and also what they return when nothing is playing. Ask osascript.
+        return scriptState() ?? direct
+    }
+
+    // MARK: - In-process getters (macOS 15.3 and earlier)
+
+    private func directState() -> State {
+        guard let isPlayingFunction else { return State(playing: false, pid: 0) }
+        final class Box: @unchecked Sendable {
+            var playing = false
+            var pid: pid_t = 0
+        }
+        let box = Box()
+        let callbackQueue = DispatchQueue.global(qos: .userInitiated)
+        let group = DispatchGroup()
+
+        // The callbacks escape, so they are stored as block values first.
+        group.enter()
+        let playingBlock: @convention(block) (Bool) -> Void = { value in
+            box.playing = value
+            group.leave()
+        }
+        isPlayingFunction(callbackQueue, playingBlock)
+        if let pidFunction {
+            group.enter()
+            let pidBlock: @convention(block) (Int32) -> Void = { value in
+                box.pid = value
+                group.leave()
+            }
+            pidFunction(callbackQueue, pidBlock)
+        }
+        guard group.wait(timeout: .now() + 0.5) == .success else {
+            return State(playing: false, pid: 0)
+        }
+        return State(playing: box.playing, pid: box.pid)
+    }
+
+    // MARK: - osascript (macOS 15.4 and later)
+
+    /// JXA run by `/usr/bin/osascript`. Prints `<playing 0|1> <pid>`.
+    private static let nowPlayingScript = """
+    ObjC.import('Foundation');
+    $.NSBundle.bundleWithPath('/System/Library/PrivateFrameworks/MediaRemote.framework/').load;
+    const R = $.NSClassFromString('MRNowPlayingRequest');
+    if (R.isNil()) { '0 0'; } else {
+      const player = R.localNowPlayingPlayerPath;
+      const pid = player.isNil() || player.client.isNil() ? 0 : player.client.processIdentifier;
+      (R.localIsPlaying ? '1 ' : '0 ') + pid;
+    }
+    """
+
+    private func scriptState() -> State? {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+        process.arguments = ["-l", "JavaScript", "-e", Self.nowPlayingScript]
+        let output = Pipe()
+        process.standardOutput = output
+        process.standardError = FileHandle.nullDevice
+
+        let finished = DispatchSemaphore(value: 0)
+        process.terminationHandler = { _ in finished.signal() }
+        do {
+            try process.run()
+        } catch {
+            log.error("osascript failed to launch: \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+        if finished.wait(timeout: .now() + 2) == .timedOut {
+            process.terminate()
+            log.error("osascript Now Playing query timed out")
+            return nil
+        }
+        guard process.terminationStatus == 0 else {
+            log.error("osascript Now Playing query exited \(process.terminationStatus)")
+            return nil
+        }
+        let data = output.fileHandleForReading.readDataToEndOfFile()
+        let text = String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+        let fields = text.split(separator: " ")
+        guard fields.count == 2, let pid = Int32(fields[1]) else {
+            log.error("osascript Now Playing query returned \(text, privacy: .public)")
+            return nil
+        }
+        return State(playing: fields[0] == "1", pid: pid)
+    }
+
+    // MARK: -
 
     private func send(_ command: UInt32) -> Bool {
         guard let sendFunction else { return false }
