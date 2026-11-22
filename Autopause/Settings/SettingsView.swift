@@ -8,15 +8,19 @@ struct SettingsView: View {
         Form {
             Section {
                 Toggle("Autopause", isOn: $settings.enabled)
-                Picker("Mode", selection: $settings.mode) {
-                    ForEach(DuckMode.allCases) { mode in
-                        Text(mode.title).tag(mode)
+                LabeledContent("Mode") {
+                    HStack(spacing: 16) {
+                        Toggle("Mute", isOn: muteBinding)
+                            .disabled(settings.modes.isLastOn(mute: true))
+                        Toggle("Pause", isOn: pauseBinding)
+                            .disabled(settings.modes.isLastOn(mute: false))
                     }
+                    .toggleStyle(.checkbox)
                 }
                 Text(modeCaption)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                if settings.mode == .mute {
+                if settings.modes.mute {
                     slider(
                         title: "Fade duration",
                         value: $settings.fadeDuration,
@@ -122,13 +126,24 @@ struct SettingsView: View {
                minHeight: 360, idealHeight: 600, maxHeight: 900)
     }
 
+    private var muteBinding: Binding<Bool> {
+        Binding(get: { settings.modes.mute }, set: { settings.setMute($0) })
+    }
+
+    private var pauseBinding: Binding<Bool> {
+        Binding(get: { settings.modes.pause }, set: { settings.setPause($0) })
+    }
+
     private var modeCaption: String {
-        switch settings.mode {
-        case .pause:
-            "Pauses Music, Spotify, and the current Now Playing app. Resumes only what Autopause paused."
-        case .mute:
-            "Fades the default output volume. Media keeps playing."
+        let modes = settings.modes
+        let lastOn = " At least one stays on."
+        if modes.mute && modes.pause {
+            return "Fades the volume out, then pauses Music, Spotify, and the current Now Playing app. On resume, plays and fades back in. Resumes only what Autopause paused."
         }
+        if modes.pause {
+            return "Pauses Music, Spotify, and the current Now Playing app. Resumes only what Autopause paused." + lastOn
+        }
+        return "Fades the default output volume. Media keeps playing." + lastOn
     }
 
     private var fadeCaption: String {

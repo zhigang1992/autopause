@@ -11,6 +11,7 @@
 		03906EFC845035ACBC1FAE7B /* MonitorPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FEF94826F8DC41D3491794 /* MonitorPolicyTests.swift */; };
 		0F5012998F4B21BA87CC2DFA /* PauseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71B32F7290EE2057F3A429CB /* PauseController.swift */; };
 		1513773DF6EE229B937E5AAF /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9933BCDBCF60E20DF61EC8A /* SettingsWindowController.swift */; };
+		22B0844784F54DE2592B3CE0 /* DuckModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B263BEBD1ABB50230ACDD91F /* DuckModes.swift */; };
 		26416E84328471677EE82ABA /* MonitorPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE1859ADBB0D02037AC0AA6 /* MonitorPolicy.swift */; };
 		2D5CBCBF2483B3DFEAB98682 /* MonitorPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE1859ADBB0D02037AC0AA6 /* MonitorPolicy.swift */; };
 		4702576EE743FD6CDC72900C /* MediaRemoteBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BDE8B79941E9983A05A5C8 /* MediaRemoteBackend.swift */; };
@@ -22,19 +23,24 @@
 		7A4CD32646093FB064730B22 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A99F4BE1AD2E74C60F2AB579 /* Sparkle */; };
 		82EEF96BF3628D3A7188F602 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2639F4C9FEBBBE581F07EE71 /* Assets.xcassets */; };
 		89B904CBEFFFEE25AE579250 /* AppleEventsMediaBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81348E2C8ADCEE9F4FA358E3 /* AppleEventsMediaBackend.swift */; };
+		939553BD4761F5C13D760F5F /* DuckModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B263BEBD1ABB50230ACDD91F /* DuckModes.swift */; };
 		940D9EEAD0BFA5E8DEFAFF5E /* DuckStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64298C4D028B5568A1D5171 /* DuckStateMachineTests.swift */; };
 		9769BB00A783417BECC1B3B3 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A724DEEFC1297D9143C153 /* SettingsStore.swift */; };
 		9AA62180C246095D9DA35600 /* MicTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C8CC8C0598B463D3D04600 /* MicTypes.swift */; };
+		9FC7A78A336B2ED1389ED818 /* DuckModesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0305D4622BFD3403F1E20536 /* DuckModesTests.swift */; };
 		B0BA06667EC208F4C62C89F1 /* OutputDucker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2AD7F66AB9F3479F252321 /* OutputDucker.swift */; };
 		C1CF17DBC1963CC46C882672 /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73EDEE7680E143D8ACBE0FBC /* StatusItemController.swift */; };
+		C536C82CB7B4BD9DBA3C780D /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A724DEEFC1297D9143C153 /* SettingsStore.swift */; };
 		DC937510DF915A9EC0576BE5 /* MediaBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA7BC454269CBCCB899B366 /* MediaBackend.swift */; };
 		EBAEA05896E4E3CFA2CF5E8A /* MicTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C8CC8C0598B463D3D04600 /* MicTypes.swift */; };
+		F2DD5EA95C4A76D22BD75EC2 /* SettingsMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB79B4AA79AE255243AF146 /* SettingsMigrationTests.swift */; };
 		F7CF235F93C88A5192E2EACB /* CoreAudioMicMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54975ECDEAF822C4A3B61A51 /* CoreAudioMicMonitor.swift */; };
 		FDAFDC091B8E30AB31D2F6C1 /* AutopauseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BD06CDD97251A9DE6E984 /* AutopauseApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		008BD06CDD97251A9DE6E984 /* AutopauseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutopauseApp.swift; sourceTree = "<group>"; };
+		0305D4622BFD3403F1E20536 /* DuckModesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckModesTests.swift; sourceTree = "<group>"; };
 		13A0D4255C9046F09C13E7DA /* DuckStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckStateMachine.swift; sourceTree = "<group>"; };
 		2639F4C9FEBBBE581F07EE71 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		27C8CC8C0598B463D3D04600 /* MicTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicTypes.swift; sourceTree = "<group>"; };
@@ -50,6 +56,8 @@
 		8B84F9067137FFE4B091D768 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		93A724DEEFC1297D9143C153 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		9AA7BC454269CBCCB899B366 /* MediaBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaBackend.swift; sourceTree = "<group>"; };
+		AFB79B4AA79AE255243AF146 /* SettingsMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMigrationTests.swift; sourceTree = "<group>"; };
+		B263BEBD1ABB50230ACDD91F /* DuckModes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckModes.swift; sourceTree = "<group>"; };
 		B2F0E28EEB5967D0C99DA057 /* AutopauseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutopauseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B64298C4D028B5568A1D5171 /* DuckStateMachineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckStateMachineTests.swift; sourceTree = "<group>"; };
 		C9933BCDBCF60E20DF61EC8A /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
@@ -98,6 +106,7 @@
 		6591FF541E8E4EB52799CF8A /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				B263BEBD1ABB50230ACDD91F /* DuckModes.swift */,
 				93A724DEEFC1297D9143C153 /* SettingsStore.swift */,
 				5909A26BD73118C551D824F7 /* SettingsView.swift */,
 				C9933BCDBCF60E20DF61EC8A /* SettingsWindowController.swift */,
@@ -180,8 +189,10 @@
 		FBB44000A3157DF31833E135 /* AutopauseTests */ = {
 			isa = PBXGroup;
 			children = (
+				0305D4622BFD3403F1E20536 /* DuckModesTests.swift */,
 				B64298C4D028B5568A1D5171 /* DuckStateMachineTests.swift */,
 				F3FEF94826F8DC41D3491794 /* MonitorPolicyTests.swift */,
+				AFB79B4AA79AE255243AF146 /* SettingsMigrationTests.swift */,
 			);
 			path = AutopauseTests;
 			sourceTree = "<group>";
@@ -287,6 +298,7 @@
 				FDAFDC091B8E30AB31D2F6C1 /* AutopauseApp.swift in Sources */,
 				F7CF235F93C88A5192E2EACB /* CoreAudioMicMonitor.swift in Sources */,
 				02B57F3CCEC9281A8928BD34 /* CoreAudioProperty.swift in Sources */,
+				22B0844784F54DE2592B3CE0 /* DuckModes.swift in Sources */,
 				55C2F2D644BBF556222414A9 /* DuckStateMachine.swift in Sources */,
 				DC937510DF915A9EC0576BE5 /* MediaBackend.swift in Sources */,
 				4702576EE743FD6CDC72900C /* MediaRemoteBackend.swift in Sources */,
@@ -306,11 +318,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				939553BD4761F5C13D760F5F /* DuckModes.swift in Sources */,
+				9FC7A78A336B2ED1389ED818 /* DuckModesTests.swift in Sources */,
 				62FDFDEA3B180959F3D3510C /* DuckStateMachine.swift in Sources */,
 				940D9EEAD0BFA5E8DEFAFF5E /* DuckStateMachineTests.swift in Sources */,
 				9AA62180C246095D9DA35600 /* MicTypes.swift in Sources */,
 				26416E84328471677EE82ABA /* MonitorPolicy.swift in Sources */,
 				03906EFC845035ACBC1FAE7B /* MonitorPolicyTests.swift in Sources */,
+				F2DD5EA95C4A76D22BD75EC2 /* SettingsMigrationTests.swift in Sources */,
+				C536C82CB7B4BD9DBA3C780D /* SettingsStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

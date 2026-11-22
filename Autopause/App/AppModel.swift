@@ -22,7 +22,10 @@ final class AppModel: ObservableObject {
     private var ticker: Timer?
     private var lastSnapshot = MicSnapshot.empty
     private var sourceName: String?
-    private var appliedMode: DuckMode?
+    private var appliedModes: DuckModes?
+    /// Bumped on every apply and restore, so a fade-out that finishes after
+    /// the duck was restored or reapplied does not pause anything.
+    private var duckGeneration = 0
     private var started = false
 
     func start() {
@@ -132,7 +135,7 @@ final class AppModel: ObservableObject {
         case .mode:
             guard machine.isDucked else { break }
             restoreApplied(fade: 0)
-            apply(settings.mode)
+            apply(settings.modes)
         case .launchAtLogin:
             applyLaunchAtLogin()
         case .monitorAllDevices:
@@ -179,7 +182,7 @@ final class AppModel: ObservableObject {
         let effects = machine.tick(now: now(), config: machineConfig)
         if !effects.isEmpty {
             perform(effects)
-        } else if machine.isDucked, appliedMode == .pause {
+        } else if machine.isDucked, pause.isDucking {
             pause.pollManualResume()
         }
         publish()
@@ -202,7 +205,7 @@ final class AppModel: ObservableObject {
         for effect in effects {
             switch effect {
             case .apply:
-                apply(settings.mode)
+                apply(settings.modes)
             case .restore:
                 restoreApplied(fade: settings.fadeDuration)
                 sourceName = nil
@@ -211,25 +214,38 @@ final class AppModel: ObservableObject {
         publish()
     }
 
-    private func apply(_ mode: DuckMode) {
-        appliedMode = mode
-        switch mode {
-        case .pause:
+    private func apply(_ modes: DuckModes) {
+        appliedModes = modes
+        duckGeneration += 1
+        let generation = duckGeneration
+        switch (modes.mute, modes.pause) {
+        case (true, true):
+            // Fade out first, then pause at the faded-out level.
+            ducker.duck(fade: settings.fadeDuration) { [weak self] in
+                guard let self, self.duckGeneration == generation, self.machine.isDucked else { return }
+                self.pause.apply()
+            }
+        case (false, true):
             ducker.restore(fade: 0)
             pause.apply()
-        case .mute:
+        case (true, false):
             pause.restore()
             ducker.duck(fade: settings.fadeDuration)
+        case (false, false):
+            break
         }
     }
 
     private func restoreApplied(fade: TimeInterval) {
-        let mode = appliedMode ?? settings.mode
-        appliedMode = nil
-        switch mode {
-        case .pause:
+        let modes = appliedModes ?? settings.modes
+        appliedModes = nil
+        duckGeneration += 1
+        // Play first, while the output is still faded out, then fade it back in.
+        // A restore during the fade-out finds nothing paused, so play is a no-op.
+        if modes.pause {
             pause.restore()
-        case .mute:
+        }
+        if modes.mute {
             ducker.restore(fade: fade)
         }
     }

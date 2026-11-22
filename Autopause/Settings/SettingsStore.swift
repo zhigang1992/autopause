@@ -1,19 +1,5 @@
 import Foundation
 
-enum DuckMode: String, CaseIterable, Identifiable {
-    case pause
-    case mute
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .pause: "Pause"
-        case .mute: "Mute"
-        }
-    }
-}
-
 enum SettingsField {
     case enabled
     case mode
@@ -33,7 +19,9 @@ struct RecentMicApp: Codable, Equatable, Identifiable {
 /// Everything the spec asks to persist, in UserDefaults.
 final class SettingsStore: ObservableObject {
     @Published var enabled: Bool { didSet { commit(.enabled) } }
-    @Published var mode: DuckMode { didSet { commit(.mode) } }
+    /// Always has at least one of Mute and Pause on. Write through
+    /// `setMute` / `setPause`, which refuse to turn off the last one.
+    @Published private(set) var modes: DuckModes { didSet { commit(.mode) } }
     @Published var fadeDuration: Double { didSet { commit(.passive) } }
     @Published var gracePeriod: Double { didSet { commit(.passive) } }
     @Published var monitorAllDevices: Bool { didSet { commit(.monitorAllDevices) } }
@@ -50,7 +38,11 @@ final class SettingsStore: ObservableObject {
 
     private enum Key {
         static let enabled = "enabled"
-        static let mode = "mode"
+        /// Up to 1.1.1 there was one `mode` string. Read once to migrate, and
+        /// still written so a downgrade keeps the closest behaviour.
+        static let legacyMode = "mode"
+        static let muteEnabled = "muteEnabled"
+        static let pauseEnabled = "pauseEnabled"
         static let fadeDuration = "fadeDuration"
         static let gracePeriod = "gracePeriod"
         static let monitorAllDevices = "monitorAllDevices"
@@ -65,7 +57,6 @@ final class SettingsStore: ObservableObject {
         self.defaults = defaults
         defaults.register(defaults: [
             Key.enabled: true,
-            Key.mode: DuckMode.pause.rawValue,
             Key.fadeDuration: 0.3,
             Key.gracePeriod: 1.5,
             Key.monitorAllDevices: true,
@@ -73,7 +64,7 @@ final class SettingsStore: ObservableObject {
             Key.launchAtLogin: false,
         ])
         enabled = defaults.object(forKey: Key.enabled) as? Bool ?? true
-        mode = DuckMode(rawValue: defaults.string(forKey: Key.mode) ?? "") ?? .pause
+        modes = Self.loadModes(defaults)
         fadeDuration = min(1.5, max(0, defaults.double(forKey: Key.fadeDuration)))
         gracePeriod = min(5, max(0, defaults.double(forKey: Key.gracePeriod)))
         monitorAllDevices = defaults.object(forKey: Key.monitorAllDevices) as? Bool ?? true
@@ -87,6 +78,30 @@ final class SettingsStore: ObservableObject {
         } else {
             recentApps = []
         }
+    }
+
+    func setMute(_ on: Bool) {
+        let next = modes.setting(mute: on)
+        if next != modes { modes = next }
+    }
+
+    func setPause(_ on: Bool) {
+        let next = modes.setting(pause: on)
+        if next != modes { modes = next }
+    }
+
+    private static func loadModes(_ defaults: UserDefaults) -> DuckModes {
+        let mute = defaults.object(forKey: Key.muteEnabled) as? Bool
+        let pause = defaults.object(forKey: Key.pauseEnabled) as? Bool
+        if let mute, let pause, mute || pause {
+            return DuckModes(mute: mute, pause: pause)
+        }
+        // First launch after upgrade (or a fresh install): keep what the old
+        // single `mode` did, and save it in the new keys.
+        let migrated = DuckModes.migrating(legacyMode: defaults.string(forKey: Key.legacyMode))
+        defaults.set(migrated.mute, forKey: Key.muteEnabled)
+        defaults.set(migrated.pause, forKey: Key.pauseEnabled)
+        return migrated
     }
 
     /// Reflect the real login-item status without registering or unregistering.
@@ -103,7 +118,9 @@ final class SettingsStore: ObservableObject {
         case .enabled:
             defaults.set(enabled, forKey: Key.enabled)
         case .mode:
-            defaults.set(mode.rawValue, forKey: Key.mode)
+            defaults.set(modes.mute, forKey: Key.muteEnabled)
+            defaults.set(modes.pause, forKey: Key.pauseEnabled)
+            defaults.set(modes.pause ? "pause" : "mute", forKey: Key.legacyMode)
         case .launchAtLogin:
             defaults.set(launchAtLogin, forKey: Key.launchAtLogin)
         case .monitorAllDevices:
