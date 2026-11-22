@@ -10,6 +10,7 @@ Nothing is recorded. It never opens the microphone, never asks for microphone pe
 
 - **Mute** — the song keeps playing. System volume fades down, then fades back. This is the one that quiets the room while you talk.
 - **Pause** — stops Music, Spotify, and whatever macOS is currently playing. Only what Autopause itself paused is played again. If you press play in the middle, it stays out of the way.
+- **Both** — turn on Mute and Pause together and the volume fades out before the music pauses, then the music plays again at that low level and fades back in. Mute and Pause are two checkboxes; at least one stays on.
 - It waits 1.5 seconds before restoring, so the music doesn't jump back between phrases. You can also limit it to specific apps, so a call doesn't cut the song.
 
 [Download 1.1.1](https://github.com/zhigang1992/autopause/releases/download/v1.1.1/Autopause-1.1.1.zip) · macOS 14 or later. Not on the App Store. The zip is Developer ID signed and notarized. Unzip it and move `Autopause.app` into Applications.
@@ -22,6 +23,7 @@ macOS 菜单栏应用。麦克风在用的时候（比如用豆包输入法听�
 
 - **静音**：歌继续放，把系统音量淡下去，说完再淡回来。这是「说话时把声音关掉」的那一种。
 - **暂停**：停掉 Music、Spotify，以及 macOS 当前正在播放的内容。只有 Autopause 自己暂停的，才会再播放。中途按了播放，它就不再插手。
+- **两个都开**：同时勾选静音和暂停，会先把音量淡出再暂停，恢复时先在低音量下播放，再淡回原来的音量。静音和暂停是两个复选框，至少保留一个。
 - 默认再等 1.5 秒才恢复，免得两句话之间音乐弹一下。也可以只让指定的 App 触发，开会就不会把歌停掉。
 
 [下载 1.1.1](https://github.com/zhigang1992/autopause/releases/download/v1.1.1/Autopause-1.1.1.zip) · macOS 14 或更新。不在 App Store。zip 已用 Developer ID 签名并公证。解压后把 `Autopause.app` 放进「应用程序」。
@@ -38,7 +40,7 @@ xcodebuild -scheme Autopause -configuration Debug test -destination 'platform=ma
 Run the `Autopause` scheme from Xcode, or open the built app from DerivedData.
 It is a menu-bar item (`LSUIElement`): no Dock icon. The icon is a mic, and a
 slashed mic while audio is ducked. The menu shows Listening or
-`Ducking: <app>`, plus the on/off toggle, mode, Settings…, and Quit.
+`Ducking: <app>`, plus the on/off toggle, a Mode submenu with Mute and Pause checkmarks, Settings…, and Quit.
 
 `project.yml` regenerates the Xcode project with [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`xcodegen generate`). The checked-in `Autopause.xcodeproj` is what `xcodebuild` uses.
 
@@ -99,6 +101,14 @@ Backends sit behind `MediaBackend`:
 2. **`MediaRemoteBackend`** — private fallback for the current Now Playing session, which is what pauses browser media and any other player the keyboard's play/pause key reaches (for example 汽水音乐 / Soda Music). It `dlopen`s `/System/Library/PrivateFrameworks/MediaRemote.framework` and sends `MRMediaRemoteSendCommand` with explicit pause and play commands (not a toggle). To know whether something is playing and which app owns it, it calls `MRMediaRemoteGetNowPlayingApplicationIsPlaying` and `MRMediaRemoteGetNowPlayingApplicationPID`; since macOS 15.4 those answer only Apple-signed processes, so when they come back empty it asks `/usr/bin/osascript` to read `MRNowPlayingRequest` instead. It pauses only what is playing, and resumes only if the same app still owns Now Playing and is still paused. There is no public API that can do this. **This fallback blocks the Mac App Store** and does not work in the App Sandbox. If the symbols are missing, Pause still covers Music and Spotify.
 
 Now Playing is a single session. Two players that are not Music or Spotify are not controlled independently.
+
+### Mute + Pause
+
+With both on, a duck fades the output out (same fade as Mute), then pauses once
+the fade has finished. On restore it plays first, while the output is still
+faded out, then fades back in. A restore that lands mid-fade-out never pauses.
+Upgrading keeps whichever single mode was selected before; a fresh install
+starts with Pause only.
 
 ### Mute
 

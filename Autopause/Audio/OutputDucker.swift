@@ -22,6 +22,9 @@ final class OutputDucker {
     /// Pre-duck levels while a restore fade is still running. A new duck during
     /// that fade must remember these, not the half-restored volume.
     private var volumeToRestore: [UInt32: Float]?
+    /// Runs on main once the duck has gone as quiet as it will: the fade out
+    /// ended, or there was nothing to fade. Dropped by a restore.
+    private var duckCompletion: (() -> Void)?
     private let volumeEpsilon: Float = 0.03
     /// Larger than one fade step, smaller than a deliberate slider jump.
     private let userJump: Float = 0.12
@@ -37,10 +40,12 @@ final class OutputDucker {
         queue.sync { ducking }
     }
 
-    func duck(fade duration: TimeInterval) {
+    /// `completion` runs on main once the output is as quiet as this duck
+    /// makes it. It does not run if a restore comes first.
+    func duck(fade duration: TimeInterval, completion: (() -> Void)? = nil) {
         queue.async {
             self.fadeDuration = duration
-            self.beginDuck(fade: duration)
+            self.beginDuck(fade: duration, completion: completion)
         }
     }
 
@@ -58,14 +63,19 @@ final class OutputDucker {
         }
     }
 
-    private func beginDuck(fade duration: TimeInterval) {
-        guard !ducking else { return }
+    private func beginDuck(fade duration: TimeInterval, completion: (() -> Void)?) {
+        duckCompletion = completion
+        guard !ducking else {
+            finishDuck()
+            return
+        }
         let remembered = volumeToRestore
         cancelFade()
         volumeToRestore = nil
         installSystemListener()
         guard let device = defaultOutputDevice() else {
             log.error("no default output device")
+            finishDuck()
             return
         }
         ducking = true
@@ -80,6 +90,7 @@ final class OutputDucker {
             // Already silent. Leave the user's mute alone, including on restore.
             leftAloneBecauseMuted = true
             savedVolumes = nil
+            finishDuck()
             return
         }
 
@@ -92,6 +103,7 @@ final class OutputDucker {
                 ducking = false
                 removeVolumeListeners()
             }
+            finishDuck()
             return
         }
 
@@ -101,6 +113,7 @@ final class OutputDucker {
     }
 
     private func restoreLocked(fade duration: TimeInterval) {
+        duckCompletion = nil
         guard ducking else { return }
         cancelFade()
         let device = deviceID
@@ -148,7 +161,8 @@ final class OutputDucker {
             leftAloneBecauseMuted = false
             usedMuteFallback = false
             removeVolumeListeners()
-            beginDuck(fade: fadeDuration)
+            // Carry a pending completion over to the new device's fade.
+            beginDuck(fade: fadeDuration, completion: duckCompletion)
             return
         }
 
@@ -163,6 +177,7 @@ final class OutputDucker {
             // User muted while we were ducked. Their mute sticks.
             userTookOver = true
             cancelFade()
+            finishDuck()
             return
         }
         let changedBySomeoneElse = volumes.contains { element, value in
@@ -174,6 +189,7 @@ final class OutputDucker {
             userTookOver = true
             savedVolumes = volumes
             cancelFade()
+            finishDuck()
         }
     }
 
@@ -188,6 +204,7 @@ final class OutputDucker {
         if duration <= 0 {
             volumeToRestore = nil
             writeVolumes(to, device: device)
+            finishDuck()
             return
         }
         volumeToRestore = restoringTo
@@ -207,10 +224,19 @@ final class OutputDucker {
             if t >= 1 {
                 self.volumeToRestore = nil
                 self.cancelFade()
+                self.finishDuck()
             }
         }
         fadeTimer = timer
         timer.resume()
+    }
+
+    /// Hands the pending duck completion to main, once. Restore fades never
+    /// have one, since `restoreLocked` clears it first.
+    private func finishDuck() {
+        guard let completion = duckCompletion else { return }
+        duckCompletion = nil
+        DispatchQueue.main.async(execute: completion)
     }
 
     private func cancelFade() {

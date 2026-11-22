@@ -50,6 +50,8 @@ targets:
       - path: Autopause/State/DuckStateMachine.swift
       - path: Autopause/Mic/MicTypes.swift
       - path: Autopause/Mic/MonitorPolicy.swift
+      - path: Autopause/Settings/DuckModes.swift
+      - path: Autopause/Settings/SettingsStore.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.reily.autopause.tests

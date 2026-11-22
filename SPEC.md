@@ -64,7 +64,9 @@ State machine: `Idle -> Active -> Grace -> Idle`.
 ## Settings UI
 
 - Master on/off toggle (also in the menu-bar menu).
-- Mode picker: Pause | Mute. Fade-duration slider (Mute only). Grace period.
+- Mode checkboxes: Mute and Pause, independent, at least one on. With both on,
+  fade out then pause; on restore, play then fade in. Fade-duration slider
+  (when Mute is on). Grace period.
 - **Which monitor to use**: checklist of input devices (default: all), with
   refresh. Plus an **App filter**: "Any app" (default) or a list of apps
   currently/recently using the mic (name, icon, bundle id) — the owner should

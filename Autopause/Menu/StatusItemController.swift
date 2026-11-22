@@ -44,11 +44,16 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
         let mode = NSMenuItem(title: "Mode", action: nil, keyEquivalent: "")
         let submenu = NSMenu()
-        for value in DuckMode.allCases {
-            let item = NSMenuItem(title: value.title, action: #selector(chooseMode(_:)), keyEquivalent: "")
+        // Independent checkmarks. The last one on is greyed out so it can't
+        // be turned off.
+        submenu.autoenablesItems = false
+        let modes = model.settings.modes
+        for (title, isMute) in [("Mute", true), ("Pause", false)] {
+            let item = NSMenuItem(title: title, action: #selector(toggleMode(_:)), keyEquivalent: "")
             item.target = self
-            item.representedObject = value.rawValue
-            item.state = model.settings.mode == value ? .on : .off
+            item.tag = isMute ? 1 : 0
+            item.state = (isMute ? modes.mute : modes.pause) ? .on : .off
+            item.isEnabled = !modes.isLastOn(mute: isMute)
             submenu.addItem(item)
         }
         mode.submenu = submenu
@@ -101,12 +106,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         model.settings.enabled.toggle()
     }
 
-    @objc private func chooseMode(_ sender: NSMenuItem) {
-        guard let raw = sender.representedObject as? String,
-              let mode = DuckMode(rawValue: raw) else {
-            return
+    @objc private func toggleMode(_ sender: NSMenuItem) {
+        let settings = model.settings
+        if sender.tag == 1 {
+            settings.setMute(!settings.modes.mute)
+        } else {
+            settings.setPause(!settings.modes.pause)
         }
-        model.settings.mode = mode
     }
 
     @objc private func openSettings() {
